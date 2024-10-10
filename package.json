@@ -13,7 +13,8 @@
     "@fortawesome/react-fontawesome": "^0.2.2",
     "mongodb": "^6.9.0",
     "mongoose": "^8.7.0",
-    "next": "14.2.13",
+    "next": "^14.2.15",
+    "next-auth": "^4.24.8",
     "react": "^18",
     "react-dom": "^18"
   },
