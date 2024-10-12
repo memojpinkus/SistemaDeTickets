@@ -4,6 +4,7 @@ import Nav from "./(components)/Nav";
 
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
+import AuthProvider from "./(components)/AuthProvider";
 
 config.autoAddCss = false;
 const geistSans = localFont({
@@ -25,16 +26,19 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <div className="flex flex-col h-screen max-h-screen">
-          <Nav />
-          <div className="flex-grow overflow-y-auto bg-page text-default-text">
-            {children}
+      <AuthProvider>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <div className="flex flex-col h-screen max-h-screen">
+            <Nav />
+
+            <div className="flex-grow overflow-y-auto bg-page text-default-text">
+              {children}
+            </div>
           </div>
-        </div>
-      </body>
+        </body>
+      </AuthProvider>
     </html>
   );
 }
