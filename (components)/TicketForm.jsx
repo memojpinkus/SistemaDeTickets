@@ -1,11 +1,46 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const TicketForm = ({ ticket }) => {
-  const EDITMODE = ticket._id === "new" ? false : true;
   const router = useRouter();
+
+  // Proporciona un valor por defecto si `ticket` es undefined
+  const defaultTicket = {
+    _id: "new",
+    title: "",
+    description: "",
+    priority: 1,
+    progress: 0,
+    status: "Not Started",
+    category: "Hardware Problem",
+  };
+
+  const currentTicket = ticket || defaultTicket;
+  const EDITMODE = currentTicket._id !== "new";
+
+  const [formData, setFormData] = useState({
+    title: currentTicket.title,
+    description: currentTicket.description,
+    priority: currentTicket.priority,
+    progress: currentTicket.progress,
+    status: currentTicket.status,
+    category: currentTicket.category,
+  });
+
+  useEffect(() => {
+    if (ticket) {
+      setFormData({
+        title: ticket.title,
+        description: ticket.description,
+        priority: ticket.priority,
+        progress: ticket.progress,
+        status: ticket.status,
+        category: ticket.category,
+      });
+    }
+  }, [ticket]);
 
   const handleChange = (e) => {
     const value = e.target.value;
@@ -20,51 +55,25 @@ const TicketForm = ({ ticket }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (EDITMODE) {
-      const res = await fetch(`/api/Tickets/${ticket._id}`, {
-        method: "PUT",
-        body: JSON.stringify({ formData }),
-        "content-type": "application/json",
-      });
+    const method = EDITMODE ? "PUT" : "POST";
+    const url = EDITMODE ? `/api/Tickets/${currentTicket._id}` : "/api/Tickets";
 
-      if (!res.ok) {
-        throw new Error("Failed to update Ticket.");
-      }
-    } else {
-      const res = await fetch("/api/Tickets", {
-        method: "POST",
-        body: JSON.stringify({ formData }),
-        "content-type": "application/json",
-      });
+    const res = await fetch(url, {
+      method,
+      body: JSON.stringify({ formData }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-      if (!res.ok) {
-        throw new Error("Failed to create Ticket.");
-      }
+    if (!res.ok) {
+      throw new Error(`Failed to ${EDITMODE ? "update" : "create"} Ticket.`);
     }
 
     router.refresh();
     router.push("/");
   };
 
-  const startingTicketData = {
-    title: "",
-    description: "",
-    priority: 1,
-    progress: 0,
-    status: "Not Started",
-    category: "Hardware Problem",
-  };
-
-  if (EDITMODE) {
-    startingTicketData["title"] = ticket.title;
-    startingTicketData["description"] = ticket.description;
-    startingTicketData["priority"] = ticket.priority;
-    startingTicketData["progress"] = ticket.progress;
-    startingTicketData["status"] = ticket.status;
-    startingTicketData["category"] = ticket.category;
-  }
-
-  const [formData, setFormData] = useState(startingTicketData);
   return (
     <div className="flex justify-center">
       <form

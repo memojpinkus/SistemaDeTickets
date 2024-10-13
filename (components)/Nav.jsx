@@ -14,7 +14,9 @@ const Nav = () => {
         </Link>
       </div>
       <div>
-        <p className="text-default-text">Login</p>
+        <Link href="/">
+          <p className="text-default-text">Login</p>
+        </Link>
       </div>
     </nav>
   );
